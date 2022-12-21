@@ -12,14 +12,14 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Get branch name
-        id: branch-name
+        id: branch_name
         uses: tj-actions/branch-names@v6
 
       - name: Replace invalid branch characters
         uses: OctopusDeploy/util-actions/find-and-replace-all@find-and-replace-all.0.1.0
         id: extract_branch
         with:
-          source: ${{ steps.branch_names.outputs.current_branch }}
+          source: ${{ steps.branch_name.outputs.current_branch }}
           searchString: "/"
           replace: "-"
 
@@ -55,7 +55,7 @@ jobs:
         uses: OctopusDeploy/push-package-action@v3.0.2
         with:
           # A multi-line list of packages to push to Octopus Deploy.
-          packages: "./dist/**"
+          packages: "./dist/*.zip"
           # Determines the action to perform with package if it already exists in the repository. Valid values are "FailIfExists", "OverwriteExisting", and "IgnoreIfExists".
           overwrite_mode: "IgnoreIfExists"
           # The API key used to access Octopus Deploy. You must provide an API key or username and password. If the guest account is enabled, a key of API-GUEST may be used. It is strongly recommended that this value retrieved from a GitHub secret.
