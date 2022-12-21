@@ -84,7 +84,7 @@ jobs:
       - name: Create dynamic environment if it doesn't exist
         shell: "pwsh"
         run: |
-          curl -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/spaces/Spaces-1/environments/dynamic/v1
+          curl -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/spaces/Spaces-1/environments/dynamic/v1
 
       # - name: Deploy Release in Octopus Deploy
       #   uses: OctopusDeploy/deploy-release-action@v3.0.0
