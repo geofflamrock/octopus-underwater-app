@@ -41,13 +41,13 @@ jobs:
         uses: OctopusDeploy/create-zip-package-action@v3.0.0
         with:
           # Package Id.
-          package_id: octopus-underwater-app
+          package_id: octopus-underwater-app-infrastructure
           # Package version.
           version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
           # The folder to put the resulting package in, relative to the current working directory; not the base path.
           output_folder: ./dist
           # The base path for the input files.
-          base_path: ./static
+          base_path: ./terraform
           # Multi-line list of files to include in the package, relative to the basePath. Supports globbing.
           files: "**"
 
