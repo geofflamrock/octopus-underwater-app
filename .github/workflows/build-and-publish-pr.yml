@@ -2,75 +2,79 @@ name: Build and publish PR
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Get branch name
-      id: branch-name
-      uses: tj-actions/branch-names@v6
-    
-    - name: Zip static files
-      uses: OctopusDeploy/create-zip-package-action@v3.0.0
-      with:
-        # Package Id.
-        package_id: octopus-underwater-app
-        # Package version.
-        version: "1.0.0-${{ steps.branch-name.outputs.current_branch }}.${{ github.run_number }}-${{ github.run_attempt }}"
-        # The folder to put the resulting package in, relative to the current working directory; not the base path.
-        output_folder: ./dist
-        # The base path for the input files.
-        base_path: ./static
-        # Multi-line list of files to include in the package, relative to the basePath. Supports globbing.
-        files: "**"
-        
-    - name: Zip infrastructure
-      uses: OctopusDeploy/create-zip-package-action@v3.0.0
-      with:
-        # Package Id.
-        package_id: octopus-underwater-app
-        # Package version.
-        version: "1.0.0-${{ steps.branch-name.outputs.current_branch }}.${{ github.run_number }}-${{ github.run_attempt }}"
-        # The folder to put the resulting package in, relative to the current working directory; not the base path.
-        output_folder: ./dist
-        # The base path for the input files.
-        base_path: ./static
-        # Multi-line list of files to include in the package, relative to the basePath. Supports globbing.
-        files: "**"
+      - uses: actions/checkout@v3
 
-    - name: Push Packages to Octopus Deploy
-      uses: OctopusDeploy/push-package-action@v3.0.2
-      with:
-        # A multi-line list of packages to push to Octopus Deploy.
-        packages: "./dist/**"
-        # Determines the action to perform with package if it already exists in the repository. Valid values are "FailIfExists", "OverwriteExisting", and "IgnoreIfExists".
-        overwrite_mode: "IgnoreIfExists"
-        # The API key used to access Octopus Deploy. You must provide an API key or username and password. If the guest account is enabled, a key of API-GUEST may be used. It is strongly recommended that this value retrieved from a GitHub secret.
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        # The base URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). It is recommended to retrieve this value from an environment variable.
-        server: ${{ secrets.OCTOPUS_URL }}
-        
-    - name: Create Release in Octopus Deploy
-      uses: OctopusDeploy/create-release-action@v3.0.1
-      with:
-        # The name of the project associated with this release.
-        project: "Underwater App"
-        # The number for the new release. If omitted, Octopus Deploy will generate a release number.
-        release_number: "1.0.0-${{ steps.branch-name.outputs.current_branch }}.${{ github.run_number }}-${{ github.run_attempt }}"
-        # The default version number of all packages to use for this release.
-        package_version: "1.0.0-${{ steps.branch-name.outputs.current_branch }}.${{ github.run_number }}-${{ github.run_attempt }}"
-        # Ignore existing releases if present in Octopus Deploy with the matching version number.
-        ignore_existing: true
-        # The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.
-        server: ${{ secrets.OCTOPUS_URL }}
-        # The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value retrieved from a GitHub secret.
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v6
 
-    
+      - name: Replace invalid branch characters
+        uses: OctopusDeploy/util-actions/find-and-replace-all@find-and-replace-all.0.1.0
+        id: extract_branch
+        with:
+          source: ${{ steps.branch_names.outputs.current_branch }}
+          searchString: "/"
+          replace: "-"
+
+      - name: Zip static files
+        uses: OctopusDeploy/create-zip-package-action@v3.0.0
+        with:
+          # Package Id.
+          package_id: octopus-underwater-app
+          # Package version.
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          # The folder to put the resulting package in, relative to the current working directory; not the base path.
+          output_folder: ./dist
+          # The base path for the input files.
+          base_path: ./static
+          # Multi-line list of files to include in the package, relative to the basePath. Supports globbing.
+          files: "**"
+
+      - name: Zip infrastructure
+        uses: OctopusDeploy/create-zip-package-action@v3.0.0
+        with:
+          # Package Id.
+          package_id: octopus-underwater-app
+          # Package version.
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          # The folder to put the resulting package in, relative to the current working directory; not the base path.
+          output_folder: ./dist
+          # The base path for the input files.
+          base_path: ./static
+          # Multi-line list of files to include in the package, relative to the basePath. Supports globbing.
+          files: "**"
+
+      - name: Push Packages to Octopus Deploy
+        uses: OctopusDeploy/push-package-action@v3.0.2
+        with:
+          # A multi-line list of packages to push to Octopus Deploy.
+          packages: "./dist/**"
+          # Determines the action to perform with package if it already exists in the repository. Valid values are "FailIfExists", "OverwriteExisting", and "IgnoreIfExists".
+          overwrite_mode: "IgnoreIfExists"
+          # The API key used to access Octopus Deploy. You must provide an API key or username and password. If the guest account is enabled, a key of API-GUEST may be used. It is strongly recommended that this value retrieved from a GitHub secret.
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          # The base URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). It is recommended to retrieve this value from an environment variable.
+          server: ${{ secrets.OCTOPUS_URL }}
+
+      - name: Create Release in Octopus Deploy
+        uses: OctopusDeploy/create-release-action@v3.0.1
+        with:
+          # The name of the project associated with this release.
+          project: "Underwater App"
+          # The number for the new release. If omitted, Octopus Deploy will generate a release number.
+          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          # The default version number of all packages to use for this release.
+          package_version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          # Ignore existing releases if present in Octopus Deploy with the matching version number.
+          ignore_existing: true
+          # The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.
+          server: ${{ secrets.OCTOPUS_URL }}
+          # The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value retrieved from a GitHub secret.
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
