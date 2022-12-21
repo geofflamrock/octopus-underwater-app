@@ -2052,13 +2052,19 @@ async function createDynamicEnvironment() {
       `Failed to get dynamic environments. Status: ${environments.statusCode}, Response: ${environments.result ? JSON.stringify(environments.result) : ""}`
     );
   }
-  if (!environments.result?.Items?.find(
+  if (!environments.result?.Environments.Items?.find(
     (environment) => environment.Name === name
   )) {
     const createEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/create/v1`;
-    const response = await httpClient.postJson(createEnvironmentUrl, {
-      name
-    });
+    const response = await httpClient.postJson(
+      createEnvironmentUrl,
+      {
+        name
+      },
+      {
+        "X-Octopus-ApiKey": apiKey
+      }
+    );
     if (response.statusCode !== 200) {
       throw new Error(
         `Failed to create dynamic environment. Status: ${response.statusCode}, Response: ${response.result ? JSON.stringify(response.result) : ""}`

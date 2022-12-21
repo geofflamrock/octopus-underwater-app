@@ -7,7 +7,9 @@ type DynamicEnvironments = {
 };
 
 type DynamicEnvironmentsResponse = {
-  Items: Array<DynamicEnvironments>;
+  Environments: {
+    Items: Array<DynamicEnvironments>;
+  };
 };
 
 async function createDynamicEnvironment() {
@@ -38,15 +40,21 @@ async function createDynamicEnvironment() {
   }
 
   if (
-    !environments.result?.Items?.find(
+    !environments.result?.Environments.Items?.find(
       (environment) => environment.Name === name
     )
   ) {
     const createEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/create/v1`;
 
-    const response = await httpClient.postJson(createEnvironmentUrl, {
-      name: name,
-    });
+    const response = await httpClient.postJson(
+      createEnvironmentUrl,
+      {
+        name: name,
+      },
+      {
+        "X-Octopus-ApiKey": apiKey,
+      }
+    );
 
     if (response.statusCode !== 200) {
       throw new Error(
