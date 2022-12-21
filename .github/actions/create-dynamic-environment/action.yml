@@ -1,0 +1,19 @@
+name: Create dynamic environment
+description: Creates a new dynamic environment in Octopus if it doesn't already exist
+author: Octopus Deploy
+runs:
+  using: node16
+  main: index.js
+inputs:
+  server:
+    description: "The URL of the Octopus server"
+    required: true
+  api_key:
+    description: "API Key to access the server"
+    required: true
+  space:
+    description: "The space to create the environment in"
+    required: true
+  environment_name:
+    description: "The name of the environment to create"
+    required: true
