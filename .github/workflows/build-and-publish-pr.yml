@@ -65,8 +65,9 @@ jobs:
         shell: "pwsh"
         run: |
           $environments = curl -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" ${{ secrets.OCTOPUS_URL }}/api/spaces/Spaces-1/environments/dynamic/v1
+          $match = $environments -match "${{ steps.extract_branch.outputs.value }}"
 
-          if ($environments -notmatch "${{ steps.extract_branch.outputs.value }}")
+          if ($match.length -eq 0)
           {
             curl -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" -X POST -d "{ 'name': '${{ steps.extract_branch.outputs.value }}' }" ${{ secrets.OCTOPUS_URL }}/api/spaces/Spaces-1/environments/dynamic/create/v1
           }
