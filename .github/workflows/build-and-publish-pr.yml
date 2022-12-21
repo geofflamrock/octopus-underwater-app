@@ -29,7 +29,7 @@ jobs:
           # Package Id.
           package_id: octopus-underwater-app
           # Package version.
-          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
           # The folder to put the resulting package in, relative to the current working directory; not the base path.
           output_folder: ./dist
           # The base path for the input files.
@@ -43,7 +43,7 @@ jobs:
           # Package Id.
           package_id: octopus-underwater-app
           # Package version.
-          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
           # The folder to put the resulting package in, relative to the current working directory; not the base path.
           output_folder: ./dist
           # The base path for the input files.
@@ -62,6 +62,7 @@ jobs:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           # The base URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). It is recommended to retrieve this value from an environment variable.
           server: ${{ secrets.OCTOPUS_URL }}
+          space: Default
 
       - name: Create Release in Octopus Deploy
         uses: OctopusDeploy/create-release-action@v3.0.1
@@ -69,12 +70,13 @@ jobs:
           # The name of the project associated with this release.
           project: "Underwater App"
           # The number for the new release. If omitted, Octopus Deploy will generate a release number.
-          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
           # The default version number of all packages to use for this release.
-          package_version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}-${{ github.run_attempt }}"
+          package_version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
           # Ignore existing releases if present in Octopus Deploy with the matching version number.
           ignore_existing: true
           # The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.
           server: ${{ secrets.OCTOPUS_URL }}
           # The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value retrieved from a GitHub secret.
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          space: Default
