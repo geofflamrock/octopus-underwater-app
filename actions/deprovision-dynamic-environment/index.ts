@@ -27,8 +27,6 @@ async function deprovisionDynamicEnvironment() {
     }
   );
 
-  info(JSON.stringify(environments));
-
   if (environments.statusCode !== 200) {
     throw new Error(
       `Failed to get dynamic environments. Status: ${
@@ -61,6 +59,8 @@ async function deprovisionDynamicEnvironment() {
         }, Response: ${response.result ? JSON.stringify(response.result) : ""}`
       );
     }
+  } else {
+    info(`Environment ${name} doesn't exist`);
   }
 }
 

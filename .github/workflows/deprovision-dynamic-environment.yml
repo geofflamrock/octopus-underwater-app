@@ -1,0 +1,33 @@
+name: Deprovision dynamic environment
+
+on:
+  pull_request:
+    types: ["closed"]
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get branch name
+        id: branch_name
+        uses: tj-actions/branch-names@v6
+
+      - name: Replace invalid branch characters
+        uses: OctopusDeploy/util-actions/find-and-replace-all@find-and-replace-all.0.1.0
+        id: extract_branch
+        with:
+          source: ${{ steps.branch_name.outputs.current_branch }}
+          searchString: "/"
+          replace: "-"
+
+      - name: Deprovision dynamic environment if it exists
+        uses: "./.github/actions/deprovision-dynamic-environment"
+        with:
+          server: ${{ secrets.OCTOPUS_URL }}
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          space: Default
+          environment_name: ${{ steps.extract_branch.outputs.value }}

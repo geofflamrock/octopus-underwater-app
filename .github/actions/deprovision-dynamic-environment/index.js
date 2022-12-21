@@ -2046,7 +2046,6 @@ async function deprovisionDynamicEnvironment() {
       "X-Octopus-ApiKey": apiKey
     }
   );
-  (0, import_core.info)(JSON.stringify(environments));
   if (environments.statusCode !== 200) {
     throw new Error(
       `Failed to get dynamic environments. Status: ${environments.statusCode}, Response: ${environments.result ? JSON.stringify(environments.result) : ""}`
@@ -2069,6 +2068,8 @@ async function deprovisionDynamicEnvironment() {
         `Failed to deprovision dynamic environment. Status: ${response.statusCode}, Response: ${response.result ? JSON.stringify(response.result) : ""}`
       );
     }
+  } else {
+    (0, import_core.info)(`Environment ${name} doesn't exist`);
   }
 }
 deprovisionDynamicEnvironment().catch((reason) => {

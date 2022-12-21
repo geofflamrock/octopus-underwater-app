@@ -27,8 +27,6 @@ async function createDynamicEnvironment() {
     }
   );
 
-  info(JSON.stringify(environments));
-
   if (environments.statusCode !== 200) {
     throw new Error(
       `Failed to get dynamic environments. Status: ${
@@ -39,11 +37,11 @@ async function createDynamicEnvironment() {
     );
   }
 
-  if (
-    !environments.result?.Environments.Items?.find(
-      (environment) => environment.Name === name
-    )
-  ) {
+  const environment = environments.result?.Environments.Items?.find(
+    (environment) => environment.Name === name
+  );
+
+  if (!environment) {
     const createEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/create/v1`;
 
     const response = await httpClient.postJson(
@@ -63,6 +61,8 @@ async function createDynamicEnvironment() {
         }, Response: ${response.result ? JSON.stringify(response.result) : ""}`
       );
     }
+  } else {
+    info(`Environment ${environment.Name} already exists`);
   }
 }
 

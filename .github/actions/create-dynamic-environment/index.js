@@ -2046,15 +2046,15 @@ async function createDynamicEnvironment() {
       "X-Octopus-ApiKey": apiKey
     }
   );
-  (0, import_core.info)(JSON.stringify(environments));
   if (environments.statusCode !== 200) {
     throw new Error(
       `Failed to get dynamic environments. Status: ${environments.statusCode}, Response: ${environments.result ? JSON.stringify(environments.result) : ""}`
     );
   }
-  if (!environments.result?.Environments.Items?.find(
-    (environment) => environment.Name === name
-  )) {
+  const environment = environments.result?.Environments.Items?.find(
+    (environment2) => environment2.Name === name
+  );
+  if (!environment) {
     const createEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/create/v1`;
     const response = await httpClient.postJson(
       createEnvironmentUrl,
@@ -2070,6 +2070,8 @@ async function createDynamicEnvironment() {
         `Failed to create dynamic environment. Status: ${response.statusCode}, Response: ${response.result ? JSON.stringify(response.result) : ""}`
       );
     }
+  } else {
+    (0, import_core.info)(`Environment ${environment.Name} already exists`);
   }
 }
 createDynamicEnvironment().catch((reason) => {
