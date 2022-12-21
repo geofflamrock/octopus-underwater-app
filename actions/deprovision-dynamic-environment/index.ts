@@ -42,7 +42,7 @@ async function deprovisionDynamicEnvironment() {
   );
 
   if (environment) {
-    const deprovisionEnvironmentUrl = `${server}/api/spaces/${space}/environments/${environment.Id}/deprovision/all/v1`;
+    const deprovisionEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/${environment.Id}/deprovision/all/v1`;
 
     const response = await httpClient.postJson(
       deprovisionEnvironmentUrl,
