@@ -91,18 +91,18 @@ jobs:
             curl -H "Content-Type: application/json" -H "X-Octopus-ApiKey: ${{ secrets.OCTOPUS_API_KEY }}" -X POST -d "{ 'name': '${{ steps.extract_branch.outputs.value }}' }" ${{ secrets.OCTOPUS_URL }}/api/spaces/Spaces-1/environments/dynamic/create/v1
           }
 
-      # - name: Deploy Release in Octopus Deploy
-      #   uses: OctopusDeploy/deploy-release-action@v3.0.0
-      #   with:
-      #     # The name of the project associated with this release.
-      #     project: "Underwater App"
-      #     # The number for the release to deploy.
-      #     release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
-      #     # A multi-line list of environments to deploy to.
-      #     environments:
-      #     # The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.
-      #     server: ${{ secrets.OCTOPUS_URL }}
-      #     # The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value retrieved from a GitHub secret.
-      #     api_key: ${{ secrets.OCTOPUS_API_KEY }}
-      #     # The name of a space within which this command will be executed. The space name is required, but you may also use the OCTOPUS_SPACE environment variable.
-      #     space: Default
+      - name: Deploy Release in Octopus Deploy
+        uses: OctopusDeploy/deploy-release-action@v3.0.0
+        with:
+          # The name of the project associated with this release.
+          project: "Underwater App"
+          # The number for the release to deploy.
+          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
+          # A multi-line list of environments to deploy to.
+          environments: ${{ steps.extract_branch.outputs.value }}
+          # The instance URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). The instance URL is required, but you may also use the OCTOPUS_URL environment variable.
+          server: ${{ secrets.OCTOPUS_URL }}
+          # The API key used to access Octopus Deploy. An API key is required, but you may also use the OCTOPUS_API_KEY environment variable. It is strongly recommended that this value retrieved from a GitHub secret.
+          api_key: ${{ secrets.OCTOPUS_API_KEY }}
+          # The name of a space within which this command will be executed. The space name is required, but you may also use the OCTOPUS_SPACE environment variable.
+          space: Default
