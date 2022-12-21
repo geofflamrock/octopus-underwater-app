@@ -1,0 +1,19 @@
+name: Deprovision dynamic environment
+description: Deprovisions a new dynamic environment in Octopus
+author: Octopus Deploy
+runs:
+  using: node16
+  main: index.js
+inputs:
+  server:
+    description: "The URL of the Octopus server"
+    required: true
+  api_key:
+    description: "API Key to access the server"
+    required: true
+  space:
+    description: "The space the environment is in"
+    required: true
+  environment_name:
+    description: "The name of the environment to deprovision"
+    required: true
