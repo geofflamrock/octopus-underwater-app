@@ -1,4 +1,4 @@
-import { getInput, setFailed } from "@actions/core";
+import { getInput, setFailed, info } from "@actions/core";
 import { HttpClient } from "@actions/http-client";
 
 type DynamicEnvironments = {
@@ -25,6 +25,8 @@ async function createDynamicEnvironment() {
     }
   );
 
+  info(JSON.stringify(environments));
+
   if (environments.statusCode !== 200) {
     throw new Error(
       `Failed to get dynamic environments. Status: ${
@@ -36,7 +38,9 @@ async function createDynamicEnvironment() {
   }
 
   if (
-    !environments.result?.Items.find((environment) => environment.Name === name)
+    !environments.result?.Items?.find(
+      (environment) => environment.Name === name
+    )
   ) {
     const createEnvironmentUrl = `${server}/api/spaces/${space}/environments/dynamic/create/v1`;
 
