@@ -6,7 +6,8 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  deprovision:
+    name: Deprovision dynamic environment
     runs-on: ubuntu-latest
 
     steps:

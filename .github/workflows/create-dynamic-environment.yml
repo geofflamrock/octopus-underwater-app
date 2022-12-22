@@ -1,11 +1,12 @@
-name: Build and publish PR
+name: Create dynamic environment from PR
 
 on:
   pull_request:
     branches: ["main"]
 
 jobs:
-  build:
+  create:
+    name: Publish packages, create release and deploy to a dynamic environment
     runs-on: ubuntu-latest
 
     steps:
