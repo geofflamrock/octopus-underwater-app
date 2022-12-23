@@ -72,6 +72,7 @@ jobs:
 
       - name: Deploy Release in Octopus Deploy
         uses: OctopusDeploy/deploy-release-action@v3.0.0
+        continue-on-error: true # Deployments to dynamic environments currently create fine but the action blows up trying to get the name
         with:
           project: "Underwater App"
           release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
