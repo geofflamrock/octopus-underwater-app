@@ -35,3 +35,7 @@ resource "azurerm_linux_web_app" "example" {
   }
   site_config {}
 }
+
+output "web_app_url" {
+  value = azurerm_linux_web_app.example.default_hostname
+}

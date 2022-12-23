@@ -21,14 +21,14 @@ jobs:
         id: extract_branch
         with:
           source: ${{ steps.branch_name.outputs.current_branch }}
-          searchString: "/"
+          searchRegex: "/|_"
           replace: "-"
 
       - name: Zip static files
         uses: OctopusDeploy/create-zip-package-action@v3.0.0
         with:
           package_id: octopus-underwater-app
-          version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}.${{ github.run_attempt }}"
           output_folder: ./dist
           base_path: ./static
           files: "**"
@@ -37,7 +37,7 @@ jobs:
         uses: OctopusDeploy/create-zip-package-action@v3.0.0
         with:
           package_id: octopus-underwater-app-infrastructure
-          version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
+          version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}.${{ github.run_attempt }}"
           output_folder: ./dist
           base_path: ./terraform
           files: "**"
@@ -55,8 +55,8 @@ jobs:
         uses: OctopusDeploy/create-release-action@v3.0.1
         with:
           project: "Underwater App"
-          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
-          package_version: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
+          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}.${{ github.run_attempt }}"
+          package_version: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}.${{ github.run_attempt }}"
           ignore_existing: true
           server: ${{ secrets.OCTOPUS_URL }}
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
@@ -72,9 +72,10 @@ jobs:
 
       - name: Deploy Release in Octopus Deploy
         uses: OctopusDeploy/deploy-release-action@v3.0.0
+        continue-on-error: true # Deployments to dynamic environments currently create fine but the action blows up trying to get the environment name
         with:
           project: "Underwater App"
-          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}-${{ github.run_number }}-${{ github.run_attempt }}"
+          release_number: "1.0.0-${{ steps.extract_branch.outputs.value }}.${{ github.run_number }}.${{ github.run_attempt }}"
           environments: ${{ steps.extract_branch.outputs.value }}
           server: ${{ secrets.OCTOPUS_URL }}
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
