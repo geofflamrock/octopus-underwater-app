@@ -21,7 +21,7 @@ jobs:
         id: extract_branch
         with:
           source: ${{ steps.branch_name.outputs.current_branch }}
-          searchString: "/"
+          searchRegex: "/|_"
           replace: "-"
 
       - name: Zip static files
